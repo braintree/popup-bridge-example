@@ -12,7 +12,7 @@ function click() {
 
     window.popupBridge.open(url);
 
-    window.popupBridge.onClose = function () {
+    window.popupBridge.onCancel = function () {
       resultTerm.innerHTML = 'You did not choose a color';
       resultData.innerHTML = '';
     };
