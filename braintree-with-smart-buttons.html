@@ -4,8 +4,8 @@
         <title>PayPal Smart Buttons PopupBridge Example</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="style.css">
-        <script src="https://js.braintreegateway.com/web/3.52.1/js/paypal-checkout.min.js"></script>
-        <script src="https://www.paypal.com/sdk/js?client-id=sb&intent=capture"></script>
+        <script src="https://js.braintreegateway.com/web/3.53.0/js/paypal-checkout.min.js"></script>
+        <script src="https://www.paypal.com/sdk/js?client-id=sb&vault=true"></script>
     </head>
     <body>
         <h1>PayPal Smart Buttons PopupBridge Example</h1>
@@ -16,12 +16,9 @@
         authorization: 'sandbox_f252zhq7_hh4cpc39zq4rgjcg'
       }).then(function (paypalCheckoutInstance) {
         return paypal.Buttons({
-          createOrder: function () {
+          createBillingAgreement: function () {
             return paypalCheckoutInstance.createPayment({
-              flow: 'checkout',
-              currency: 'USD',
-              amount: '10.00',
-              intent: 'capture' 
+              flow: 'vault'
             });
           },
 
@@ -31,7 +28,7 @@
             });
           },
 
-          onCancel: function () {
+          onCancel: function (err) {
             document.querySelector('#log').innerText = 'User cancelled';
           },
 
