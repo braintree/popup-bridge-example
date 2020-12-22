@@ -27,7 +27,7 @@
       };
 
       if (window.popupBridge) {
-        createOptions.deepLinkReturnUrl = "com.braintreepayments.popupbridge.example.popupbridge://popupbridgev1",
+        createOptions.deepLinkReturnUrl = window.popupBridge.getReturnUrlPrefix();
         window.popupBridge.onComplete = function(err, payload) {
           console.log("popupbridge completed");
           console.log(err);
