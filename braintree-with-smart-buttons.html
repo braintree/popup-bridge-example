@@ -4,16 +4,21 @@
         <title>PayPal Smart Buttons PopupBridge Example</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="style.css">
-        <script src="https://js.braintreegateway.com/web/3.53.0/js/paypal-checkout.min.js"></script>
-        <script src="https://www.paypal.com/sdk/js?client-id=sb&vault=true"></script>
+        <script src="https://js.braintreegateway.com/web/3.69.0/js/paypal-checkout.min.js"></script>
     </head>
     <body>
         <h1>PayPal Smart Buttons PopupBridge Example</h1>
         <div id="paypal-button-container"></div>
         <pre id="log"></pre>
     <script>
+      var log = document.querySelector('#log');
+
       braintree.paypalCheckout.create({
         authorization: 'sandbox_f252zhq7_hh4cpc39zq4rgjcg'
+      }).then(function (paypalCheckoutInstance) {
+        return paypalCheckoutInstance.loadPayPalSDK({
+          vault: true
+        });
       }).then(function (paypalCheckoutInstance) {
         return paypal.Buttons({
           createBillingAgreement: function () {
@@ -24,16 +29,16 @@
 
           onApprove: function (data, actions) {
             return paypalCheckoutInstance.tokenizePayment(data).then(function (payload) {
-              document.querySelector('#log').innerText = JSON.stringify(payload, null, 2);
+              log.innerText = JSON.stringify(payload, null, 2);
             });
           },
 
           onCancel: function (err) {
-            document.querySelector('#log').innerText = 'User cancelled';
+            log.innerText = 'User cancelled';
           },
 
           onError: function (err) {
-            document.querySelector('#log').innerText = err.message;
+            log.innerText = err.message;
           }
         }).render('#paypal-button-container');
       }).catch(function (err) {
@@ -42,4 +47,3 @@
     </script>
     </body>
 </html>
-
