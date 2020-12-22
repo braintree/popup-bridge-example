@@ -5,10 +5,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="style.css">
         <script src="https://js.braintreegateway.com/web/3.69.0/js/venmo.js"></script>
+          <style>
+            #venmo-button-container {
+              color: white;
+              background: #3D95CE;
+              display: inline-block;
+              padding: 10px 20px;
+              border-radius: 10px;
+            }
+          </style>
     </head>
     <body>
         <h1>Venmo Example</h1>
-        <div id="venmo-button-container"></div>
+        <div id="venmo-button-container">Venmo</div>
         <pre id="log"></pre>
     <script>
       var button = document.getElementByID("venmo-button-container");
