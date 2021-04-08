@@ -3,7 +3,7 @@ function log(toLog) {
 }
 
 function isPopupBridge() {
-  return (window.popupBridge && window.popupBridge.open);
+  return Boolean(window.popupBridge && window.popupBridge.open);
 }
 
 function click() {
