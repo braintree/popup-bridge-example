@@ -29,7 +29,9 @@
         window.location.search.replace(/^\?/, "")
       );
       log.innerText = params.toString();
-      var deepLinkReturnUrl = params.get("deepLinkReturnUrl");
+      var deepLinkReturnUrl =
+        params.get("deepLinkReturnUrl") ||
+        "my-custom-url-scheme://popupbridgev1/";
 
       if (window.popupBridge) {
         deepLinkReturnUrl = window.popupBridge.getReturnUrlPrefix();
