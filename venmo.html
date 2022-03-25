@@ -30,19 +30,19 @@
       );
       var deepLinkReturnUrl = params.get("deepLinkReturnUrl");
 
-      if (deepLinkReturnUrl) {
-        createOptions.deepLinkReturnUrl = deepLinkReturnUrl;
-      }
-
       if (window.popupBridge) {
-        createOptions.deepLinkReturnUrl =
-          window.popupBridge.getReturnUrlPrefix();
+        deepLinkReturnUrl = window.popupBridge.getReturnUrlPrefix();
         window.popupBridge.onComplete = function (err, payload) {
           console.log("popupbridge completed");
           console.log(err);
           console.log(payload);
           window.location.hash = payload.hash;
         };
+      }
+
+      if (deepLinkReturnUrl) {
+        createOptions.deepLinkReturnUrl = deepLinkReturnUrl;
+        log.innerText = "return url: " + deepLinkReturnUrl;
       }
 
       braintree.venmo.create(createOptions).then(function (venmo) {
