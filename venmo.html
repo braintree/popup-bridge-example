@@ -25,7 +25,9 @@
       var createOptions = {
         authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
       };
-      var params = new URLSearchParams(widow.location.search.replace(/^?/, ""));
+      var params = new URLSearchParams(
+        widow.location.search.replace(/^\?/, "")
+      );
 
       if (params.deepLinkReturnUrl) {
         createOptions.deepLinkReturnUrl = params.deepLinkReturnUrl;
