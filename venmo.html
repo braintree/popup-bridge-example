@@ -28,9 +28,10 @@
       var params = new URLSearchParams(
         window.location.search.replace(/^\?/, "")
       );
+      var deepLinkReturnUrl = params.get("deepLinkReturnUrl");
 
-      if (params.deepLinkReturnUrl) {
-        createOptions.deepLinkReturnUrl = params.deepLinkReturnUrl;
+      if (deepLinkReturnUrl) {
+        createOptions.deepLinkReturnUrl = deepLinkReturnUrl;
       }
 
       if (window.popupBridge) {
