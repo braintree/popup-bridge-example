@@ -20,46 +20,50 @@
     <div id="venmo-button-container">Venmo</div>
     <pre id="log"></pre>
     <script>
-      var button = document.getElementById("venmo-button-container");
-      var log = document.querySelector("#log");
-      var createOptions = {
-        authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
-      };
-      var params = new URLSearchParams(
-        window.location.search.replace(/^\?/, "")
-      );
-      log.innerText = params.toString();
-      var deepLinkReturnUrl =
-        params.get("deepLinkReturnUrl") ||
-        "my-custom-url-scheme://popupbridgev1/";
-
-      if (window.popupBridge) {
-        deepLinkReturnUrl = window.popupBridge.getReturnUrlPrefix();
-        window.popupBridge.onComplete = function (err, payload) {
-          console.log("popupbridge completed");
-          console.log(err);
-          console.log(payload);
-          window.location.hash = payload.hash;
+      try {
+        var button = document.getElementById("venmo-button-container");
+        var log = document.querySelector("#log");
+        var createOptions = {
+          authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
         };
-      }
+        var params = new URLSearchParams(
+          window.location.search.replace(/^\?/, "")
+        );
+        log.innerText = params.toString();
+        var deepLinkReturnUrl =
+          params.get("deepLinkReturnUrl") ||
+          "my-custom-url-scheme://popupbridgev1/";
 
-      if (deepLinkReturnUrl) {
-        createOptions.deepLinkReturnUrl = deepLinkReturnUrl;
-        log.innerText = "return url: " + deepLinkReturnUrl;
-      }
+        if (window.popupBridge) {
+          deepLinkReturnUrl = window.popupBridge.getReturnUrlPrefix();
+          window.popupBridge.onComplete = function (err, payload) {
+            console.log("popupbridge completed");
+            console.log(err);
+            console.log(payload);
+            window.location.hash = payload.hash;
+          };
+        }
 
-      braintree.venmo.create(createOptions).then(function (venmo) {
-        button.addEventListener("click", function () {
-          venmo
-            .tokenize()
-            .then(function (payload) {
-              log.innerText = JSON.stringify(payload, null, 2);
-            })
-            .catch(function (err) {
-              log.innerText = err.message;
-            });
+        if (deepLinkReturnUrl) {
+          createOptions.deepLinkReturnUrl = deepLinkReturnUrl;
+          log.innerText = "return url: " + deepLinkReturnUrl;
+        }
+
+        braintree.venmo.create(createOptions).then(function (venmo) {
+          button.addEventListener("click", function () {
+            venmo
+              .tokenize()
+              .then(function (payload) {
+                log.innerText = JSON.stringify(payload, null, 2);
+              })
+              .catch(function (err) {
+                log.innerText = err.message;
+              });
+          });
         });
-      });
+      } catch (e) {
+        log.innerText = e.message;
+      }
     </script>
   </body>
 </html>
