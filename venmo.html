@@ -1,34 +1,40 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Venmo PopupBridge Example</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="style.css">
-        <script src="https://js.braintreegateway.com/web/3.79.1/js/venmo.js"></script>
-          <style>
-            #venmo-button-container {
-              color: white;
-              background: #3D95CE;
-              display: inline-block;
-              padding: 10px 20px;
-              border-radius: 10px;
-            }
-          </style>
-    </head>
-    <body>
-        <h1>Venmo Example</h1>
-        <div id="venmo-button-container">Venmo</div>
-        <pre id="log"></pre>
+  <head>
+    <title>Venmo PopupBridge Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://js.braintreegateway.com/web/3.79.1/js/venmo.js"></script>
+    <style>
+      #venmo-button-container {
+        color: white;
+        background: #3d95ce;
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Venmo Example</h1>
+    <div id="venmo-button-container">Venmo</div>
+    <pre id="log"></pre>
     <script>
       var button = document.getElementById("venmo-button-container");
-      var log = document.querySelector('#log');
+      var log = document.querySelector("#log");
       var createOptions = {
-        authorization: 'sandbox_f252zhq7_hh4cpc39zq4rgjcg'
+        authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
       };
+      var params = new URLSearchParams(widow.location.search.replace(/^?/, ""));
+
+      if (params.deepLinkReturnUrl) {
+        createOptions.deepLinkReturnUrl = params.deepLinkReturnUrl;
+      }
 
       if (window.popupBridge) {
-        createOptions.deepLinkReturnUrl = window.popupBridge.getReturnUrlPrefix();
-        window.popupBridge.onComplete = function(err, payload) {
+        createOptions.deepLinkReturnUrl =
+          window.popupBridge.getReturnUrlPrefix();
+        window.popupBridge.onComplete = function (err, payload) {
           console.log("popupbridge completed");
           console.log(err);
           console.log(payload);
@@ -37,14 +43,17 @@
       }
 
       braintree.venmo.create(createOptions).then(function (venmo) {
-        button.addEventListener('click', function () {
-          venmo.tokenize().then(function (payload) {
-            log.innerText = JSON.stringify(payload, null, 2);
-          }).catch(function (err) {
-            log.innerText = err.message;
-          })
+        button.addEventListener("click", function () {
+          venmo
+            .tokenize()
+            .then(function (payload) {
+              log.innerText = JSON.stringify(payload, null, 2);
+            })
+            .catch(function (err) {
+              log.innerText = err.message;
+            });
         });
       });
     </script>
-    </body>
+  </body>
 </html>
