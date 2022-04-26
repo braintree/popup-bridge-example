@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Local Payment Method PopupBridge Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://js.braintreegateway.com/web/3.85.3/js/local-payment.min.js"></script>
+    <style>
+      #ideal-button-container{
+        color: white;
+        background: black;
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Ideal Example</h1>
+    <button id="ideal-button-container">Ideal</button>
+    <pre id="log"></pre>
+    <script>
+      var button = document.getElementById("ideal-button-container");
+      var log = document.querySelector("#log");
+      var createOptions = {
+        authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
+      };
+
+      if (window.popupBridge) {
+        // if popup bridge is detected, we set the deepLinkReturnUrl param
+        // so that the Venmo app knows to app switch back to the app hosting
+        // the webview, instead of the url inside of the webview
+        createOptions.deepLinkReturnUrl =
+          window.popupBridge.getReturnUrlPrefix();
+
+        // the Braintree SDK is waiting for the hash in the url to change,
+        // normally the Venmo app switches back to the window and updates
+        // the hash along with it, but since we're instructing Venmo to
+        // return to the app that _hosts_ the webview via the specified
+        // deep link return url, we have to manually update the hash of
+        // the webview's url with the hash popup bridge receives from
+        // the Venmo app upon completion
+        window.popupBridge.onComplete = function (err, payload) {
+          console.log("popupbridge completed");
+          console.log(err);
+          console.log(payload);
+          window.location.hash = payload.hash;
+        };
+      }
+
+	    braintree.localPayment.create({
+       client: clientInstance,
+       merchantAccountId: merchantAccountId()
+     }, function (localPaymentErr, paymentInstance) {
+
+        // Stop if there was a problem creating local payment component.
+        // This could happen if there was a network error or if it's incorrectly
+        // configured.
+        if (localPaymentErr) {
+          console.error('Error creating local payment:', localPaymentErr);
+          return;
+        }
+
+        localPaymentInstance = paymentInstance;
+      });
+
+      function createLocalPaymentClickListener(type) {
+      return function (event) {
+        event.preventDefault();
+
+        localPaymentInstance.startPayment({
+          paymentType: type,
+          amount: '10.67',
+          fallback: { // see Fallback section for details on these params
+            url: 'https://your-domain.com/page-to-complete-checkout',
+            buttonText: 'Complete Payment'
+          },
+          currencyCode: 'EUR',
+          givenName: 'Joe',
+          surname: 'Doe',
+          address: {
+            countryCode: 'NL'
+          },
+          onPaymentStart: function (data, start) {
+            // NOTE: It is critical here to store data.paymentId on your server
+            //       so it can be mapped to a webhook sent by Braintree once the
+            //       buyer completes their payment. See Start the payment
+            //       section for details.
+
+            // Call start to initiate the popup
+            start();
+          }
+        }, function (startPaymentError, payload) {
+          if (startPaymentError) {
+            if (startPaymentError.code === 'LOCAL_PAYMENT_POPUP_CLOSED') {
+              console.error('Customer closed Local Payment popup.');
+            } else {
+              console.error('Error!', startPaymentError);
+            }
+          } else {
+            // Send the nonce to your server to create a transaction
+            console.log(payload.nonce);
+          }
+        });
+      };
+    }
+    button.addEventListener('click', createLocalPaymentClickListener('ideal')); 
+   </script>
+  </body>
+</html>
+
