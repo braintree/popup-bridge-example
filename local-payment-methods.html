@@ -16,8 +16,8 @@
     </style>
   </head>
   <body>
-    <h1>Ideal Example</h1>
-    <button id="ideal-button-container">Ideal</button>
+    <h1>Local Payment Method - iDEAL Example</h1>
+    <button id="ideal-button-container">iDEAL</button>
     <pre id="log"></pre>
     <script>
       var button = document.getElementById("ideal-button-container");
@@ -97,13 +97,15 @@
             function (startPaymentError, payload) {
               if (startPaymentError) {
                 if (startPaymentError.code === "LOCAL_PAYMENT_POPUP_CLOSED") {
+                  log.innerText = "Customer closed Local Payment popup.";
                   console.error("Customer closed Local Payment popup.");
                 } else {
+                  log.innerText = startPaymentError;
                   console.error("Error!", startPaymentError);
                 }
               } else {
                 // Send the nonce to your server to create a transaction
-                log.innerText = payload.nonce;
+                log.innerText = `Nonce: ${payload.nonce}`;
               }
             }
           );
