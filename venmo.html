@@ -27,6 +27,9 @@
         paymentMethodUsage: "SINGLE_USE",
       };
 
+      log.innerText =
+        "Unique Session ID: " + String(Math.random()).split("0.")[1];
+
       if (window.popupBridge) {
         // if popup bridge is detected, we set the deepLinkReturnUrl param
         // so that the Venmo app knows to app switch back to the app hosting
