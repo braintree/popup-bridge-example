@@ -28,7 +28,9 @@
       };
 
       log.innerText =
-        "Unique Session ID: " + String(Math.random()).split("0.")[1];
+        "Unique Session ID: " +
+        String(Math.random()).split("0.")[1] +
+        "\n\n (demonstrates that the app switch back form the Venmo app may recreate the Webview)";
 
       if (window.popupBridge) {
         // if popup bridge is detected, we set the deepLinkReturnUrl param
