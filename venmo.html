@@ -21,16 +21,22 @@
     <pre id="log"></pre>
     <script>
       var button = document.getElementById("venmo-button-container");
-      var log = document.querySelector("#log");
       var createOptions = {
         authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
         paymentMethodUsage: "SINGLE_USE",
       };
 
-      log.innerText =
+      function log(message) {
+        var logElement = document.querySelector("#log");
+
+        logElement.innerText = message + "\n\n" + logElement.innerText;
+      }
+
+      log(
         "Unique Session ID: " +
-        String(Math.random()).split("0.")[1] +
-        "\n\n (demonstrates that the app switch back form the Venmo app may recreate the Webview)";
+          String(Math.random()).split("0.")[1] +
+          "\n\n (demonstrates that the app switch back form the Venmo app may recreate the Webview)"
+      );
 
       if (window.popupBridge) {
         // if popup bridge is detected, we set the deepLinkReturnUrl param
@@ -59,10 +65,10 @@
           venmo
             .tokenize()
             .then(function (payload) {
-              log.innerText = JSON.stringify(payload, null, 2);
+              log(JSON.stringify(payload, null, 2));
             })
             .catch(function (err) {
-              log.innerText = err.message;
+              log(err.message);
             });
         }
 
