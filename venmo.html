@@ -53,7 +53,7 @@
       }
 
       braintree.venmo.create(createOptions).then(function (venmo) {
-        button.addEventListener("click", function () {
+        function tokenize() {
           venmo
             .tokenize()
             .then(function (payload) {
@@ -62,6 +62,14 @@
             .catch(function (err) {
               log.innerText = err.message;
             });
+        }
+
+        if (venmo.hasTokenizationResult()) {
+          tokenize();
+        }
+
+        button.addEventListener("click", function () {
+          tokenize();
         });
       });
     </script>
