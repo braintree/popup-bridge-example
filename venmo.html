@@ -59,19 +59,6 @@
           window.location.hash = payload.hash;
         };
       }
-      var params = new URLSearchParams(window.location.search);
-
-      // override deep link return url if a query param is set
-      // note: this is not recomended for a production app, this
-      // is only done to make testing this flow easier. In production
-      // you would not want to rely on a query param to set the
-      // deep link return url, as that would allow it to be set
-      // arbitrarilly by your customer by changing the query param
-      if (params.has("deepLinkReturnUrl")) {
-        createOptions.deepLinkReturnUrl = params.get("deepLinkReturnUrl");
-      }
-
-      console.log(createOptions);
 
       braintree.venmo.create(createOptions).then(function (venmo) {
         function tokenize() {
