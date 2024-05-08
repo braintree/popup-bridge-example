@@ -7,6 +7,13 @@ $('a').on('click', function (event) {
      if (anchor === 'cancel') {
        prefix += 'cancel';
      }
+
+     if (location.search.lastIndexOf('isAppLink') !== -1) {
+       if (location.search.split('popupBridgeReturnUrlPrefix=')[1] == "true") {
+         prefix = "https://mobile-sdk-demo-site-838cead5d3ab.herokuapp.com"
+       }
+     }
+
      location.href = prefix + '?color=' + color;
    } else {
      window.opener.postMessage(JSON.stringify({ color: color }), '*');
