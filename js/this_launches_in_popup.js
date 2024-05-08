@@ -10,7 +10,6 @@ $('a').on('click', function (event) {
      if (anchor === 'cancel') {
        prefix += 'cancel';
      }
-
      location.href = prefix + '?color=' + color;
    } else {
      window.opener.postMessage(JSON.stringify({ color: color }), '*');
