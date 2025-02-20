@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Testing out iframes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+	  <h2>Test out hosting your page in an iframe</h2>
+	  <label for="iframe-src-input">Enter link for iframe src</label>
+	  <input type="text" id="iframe-src-input"/>
+	  <button id="render-iframes">Render</button>
+	  <div id="iframe-container"></div>
+	  <script>
+	    const button = document.getElementById("render-iframes")
+            const iframeSrc = document.getElementById("iframe-src-input")
+	    const iframeContainer = document.getElementById("iframe-container")
+	    const iframeId = "iframe-id"
+	    button.addEventListener("click", () => {
+	    console.log(iframeContainer.children)
+	      if (iframeContainer.children && iframeContainer.children.length > 0) {
+	        document.getElementById("iframe-id").remove()
+	      } 
+              const iframe = document.createElement("iframe")
+	      iframe.src = iframeSrc.value
+	      iframe.id = iframeId
+	      iframeContainer.append(iframe)
+	    })
+	  </script>
+  </body>
+</html>
