@@ -1,87 +1,90 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Venmo PopupBridge Example</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://js.braintreegateway.com/web/3.115.1/js/venmo.js"></script>
-    <style>
-      #venmo-button-container {
-        color: white;
-        background: #3d95ce;
-        display: inline-block;
-        padding: 10px 20px;
-        border-radius: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Venmo Example</h1>
-    <div id="venmo-button-container">Venmo</div>
-    <pre id="log"></pre>
-    <script>
-      var button = document.getElementById("venmo-button-container");
-      var createOptions = {
-        authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
-        paymentMethodUsage: "SINGLE_USE",
-        allowAndroidRecreation: false
+
+<head>
+  <title>Venmo PopupBridge Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://js.braintreegateway.com/web/3.115.1/js/venmo.js"></script>
+  <style>
+    #venmo-button-container {
+      color: white;
+      background: #3d95ce;
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Venmo Example</h1>
+  <div id="venmo-button-container">Venmo</div>
+  <pre id="log"></pre>
+  <script>
+    var button = document.getElementById("venmo-button-container");
+    var createOptions = {
+      authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
+      paymentMethodUsage: "SINGLE_USE",
+      allowAndroidRecreation: false
+    };
+
+    function log(message) {
+      var logElement = document.querySelector("#log");
+
+      logElement.innerText = message + "\n\n" + logElement.innerText;
+    }
+
+    log(
+      "Unique Session ID: " +
+      String(Math.random()).split("0.")[1] +
+      "\n\n (demonstrates that the app switch back form the Venmo app may recreate the Webview)"
+    );
+
+    if (window.popupBridge) {
+      // if popup bridge is detected, we set the deepLinkReturnUrl param
+      // so that the Venmo app knows to app switch back to the app hosting
+      // the webview, instead of the url inside of the webview
+      createOptions.deepLinkReturnUrl =
+        window.popupBridge.getReturnUrlPrefix();
+
+      // the Braintree SDK is waiting for the hash in the url to change,
+      // normally the Venmo app switches back to the window and updates
+      // the hash along with it, but since we're instructing Venmo to
+      // return to the app that _hosts_ the webview via the specified
+      // deep link return url, we have to manually update the hash of
+      // the webview's url with the hash popup bridge receives from
+      // the Venmo app upon completion
+      window.popupBridge.onComplete = function (err, payload) {
+        console.log("popupbridge completed");
+        console.log(err);
+        console.log(payload);
+        window.location.hash = payload.hash;
       };
+    }
 
-      function log(message) {
-        var logElement = document.querySelector("#log");
-
-        logElement.innerText = message + "\n\n" + logElement.innerText;
+    braintree.venmo.create(createOptions).then(function (venmo) {
+      function tokenize() {
+        venmo
+          .tokenize()
+          .then(function (payload) {
+            log(JSON.stringify(payload, null, 2));
+          })
+          .catch(function (err) {
+            log(err.message);
+          });
       }
 
-      log(
-        "Unique Session ID: " +
-          String(Math.random()).split("0.")[1] +
-          "\n\n (demonstrates that the app switch back form the Venmo app may recreate the Webview)"
-      );
-
-      if (window.popupBridge) {
-        // if popup bridge is detected, we set the deepLinkReturnUrl param
-        // so that the Venmo app knows to app switch back to the app hosting
-        // the webview, instead of the url inside of the webview
-        createOptions.deepLinkReturnUrl =
-          window.popupBridge.getReturnUrlPrefix();
-
-        // the Braintree SDK is waiting for the hash in the url to change,
-        // normally the Venmo app switches back to the window and updates
-        // the hash along with it, but since we're instructing Venmo to
-        // return to the app that _hosts_ the webview via the specified
-        // deep link return url, we have to manually update the hash of
-        // the webview's url with the hash popup bridge receives from
-        // the Venmo app upon completion
-        window.popupBridge.onComplete = function (err, payload) {
-          console.log("popupbridge completed");
-          console.log(err);
-          console.log(payload);
-          window.location.hash = payload.hash;
-        };
+      if (venmo.hasTokenizationResult()) {
+        log("Found tokenization result in URL on page load.");
+        tokenize();
       }
 
-      braintree.venmo.create(createOptions).then(function (venmo) {
-        function tokenize() {
-          venmo
-            .tokenize()
-            .then(function (payload) {
-              log(JSON.stringify(payload, null, 2));
-            })
-            .catch(function (err) {
-              log(err.message);
-            });
-        }
-
-        if (venmo.hasTokenizationResult()) {
-          log("Found tokenization result in URL on page load.");
-          tokenize();
-        }
-
-        button.addEventListener("click", function () {
-          tokenize();
-        });
+      button.addEventListener("click", function () {
+        tokenize();
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
+
 </html>
