@@ -1,49 +1,53 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>PayPal Smart Buttons PopupBridge Example</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="style.css">
-        <script src="https://js.braintreegateway.com/web/3.115.1/js/paypal-checkout.min.js"></script>
-    </head>
-    <body>
-        <h1>PayPal Smart Buttons PopupBridge Example</h1>
-        <div id="paypal-button-container"></div>
-        <pre id="log"></pre>
-    <script>
-      var log = document.querySelector('#log');
 
-      braintree.paypalCheckout.create({
-        authorization: 'sandbox_f252zhq7_hh4cpc39zq4rgjcg'
-      }).then(function (paypalCheckoutInstance) {
-        return paypalCheckoutInstance.loadPayPalSDK({
-          vault: true
-        });
-      }).then(function (paypalCheckoutInstance) {
-        return paypal.Buttons({
-          createBillingAgreement: function () {
-            return paypalCheckoutInstance.createPayment({
-              flow: 'vault'
-            });
-          },
+<head>
+  <title>PayPal Smart Buttons PopupBridge Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://js.braintreegateway.com/web/3.115.1/js/paypal-checkout.min.js"></script>
+</head>
 
-          onApprove: function (data, actions) {
-            return paypalCheckoutInstance.tokenizePayment(data).then(function (payload) {
-              log.innerText = JSON.stringify(payload, null, 2);
-            });
-          },
+<body>
+  <h1>PayPal Smart Buttons PopupBridge Example</h1>
+  <div id="paypal-button-container"></div>
+  <pre id="log"></pre>
+  <script>
+    var log = document.querySelector('#log');
 
-          onCancel: function (err) {
-            log.innerText = 'User cancelled';
-          },
-
-          onError: function (err) {
-            log.innerText = err.message;
-          }
-        }).render('#paypal-button-container');
-      }).catch(function (err) {
-       console.error('Error!', err);
+    braintree.paypalCheckout.create({
+      authorization: 'sandbox_f252zhq7_hh4cpc39zq4rgjcg'
+    }).then(function (paypalCheckoutInstance) {
+      return paypalCheckoutInstance.loadPayPalSDK({
+        vault: true
       });
-    </script>
-    </body>
+    }).then(function (paypalCheckoutInstance) {
+      return paypal.Buttons({
+        fundingSource: paypal.FUNDING.PAYPAL,
+        createBillingAgreement: function () {
+          return paypalCheckoutInstance.createPayment({
+            flow: 'vault'
+          });
+        },
+
+        onApprove: function (data, actions) {
+          return paypalCheckoutInstance.tokenizePayment(data).then(function (payload) {
+            log.innerText = JSON.stringify(payload, null, 2);
+          });
+        },
+
+        onCancel: function (err) {
+          log.innerText = 'User cancelled';
+        },
+
+        onError: function (err) {
+          log.innerText = err.message;
+        }
+      }).render('#paypal-button-container');
+    }).catch(function (err) {
+      console.error('Error!', err);
+    });
+  </script>
+</body>
+
 </html>
