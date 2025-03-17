@@ -25,6 +25,7 @@
     }
 
     paypal.Buttons({
+      fundingSource: paypal.FUNDING.PAYPAL,
       createOrder: function (data, actions) {
         return actions.order.create(paymentOptions());
       },
