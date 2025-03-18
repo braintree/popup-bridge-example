@@ -9,14 +9,17 @@
 </head>
 
 <body>
-  <li>
+  <div>
     <a href="index.html"><- Back</a>
-  </li>
-  <h2>Test out hosting your page in an iframe</h2>
+  </div>
+
+  <h1>Test out hosting your page in an iframe</h1>
+
   <label for="iframe-src-input">Enter link for iframe src</label>
   <input type="text" id="iframe-src-input" />
   <button id="render-iframes">Render</button>
   <div id="iframe-container"></div>
+
   <script>
     const button = document.getElementById("render-iframes")
     const iframeSrc = document.getElementById("iframe-src-input")
