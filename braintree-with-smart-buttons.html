@@ -23,7 +23,8 @@
     var log = document.querySelector('#log');
 
     braintree.paypalCheckout.create({
-      authorization: 'sandbox_rz48bqvw_jcyycfw6f9j4nj9c'
+      authorization: 'sandbox_wq22jzvx_dcpspy2brwdjr3qn',
+      merchantAccountId: 'fake_switch_usd'
     }).then(function (paypalCheckoutInstance) {
       return paypalCheckoutInstance.loadPayPalSDK({
         vault: true
